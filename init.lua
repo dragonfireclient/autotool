@@ -32,20 +32,20 @@ local function find_best_tool(nodename)
 			new_index = index
 		end
 	end
-	return new_index
+	return new_index, best_time
 end
 
 function autotool.select_best_tool(nodename)
 	minetest.localplayer:set_wield_index(find_best_tool(nodename))
 end
 
-local new_index, old_index, pointed_pos
+local new_index, old_index, pointed_pos, best_time
 
 minetest.register_on_punchnode(function(pos, node)
 	if minetest.settings:get_bool("autotool") then
 		pointed_pos = pos
 		old_index = old_index or minetest.localplayer:get_wield_index()
-		new_index = find_best_tool(node.name)
+		new_index, best_time = find_best_tool(node.name)
 	end
 end)
 
@@ -56,11 +56,14 @@ minetest.register_globalstep(function()
 		local pt = minetest.get_pointed_thing()
 		if pt and pt.type == "node" and vector.equals(minetest.get_pointed_thing_position(pt), pointed_pos) and player:get_control().dig then
 			player:set_wield_index(new_index)
+			if best_time == 0 then
+				minetest.dig_node(pointed_pos)
+			end
 			return
 		end
 	end
 	player:set_wield_index(old_index)
-	new_index, old_index, pointed_pos = nil
+	new_index, old_index, pointed_pos, best_time = nil
 end)
 
 minetest.register_cheat("AutoTool", "Inventory", "autotool")
