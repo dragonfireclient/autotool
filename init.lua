@@ -8,7 +8,7 @@ local function check_tool(stack, node_groups, old_best_time)
 		local level = node_groups[group]
 		if level then
 			local this_time = groupdef.times[level]
-			if this_time < best_time then
+			if this_time and this_time < best_time then
 				best_time = this_time
 			end
 		end
