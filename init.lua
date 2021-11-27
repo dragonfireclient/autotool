@@ -36,7 +36,9 @@ local function find_best_tool(nodename)
 end
 
 function autotool.select_best_tool(nodename)
-	minetest.localplayer:set_wield_index(find_best_tool(nodename))
+	local new_index, best_time = find_best_tool(nodename)
+	minetest.localplayer:set_wield_index(new_index)
+	return best_time
 end
 
 local new_index, old_index, pointed_pos, best_time
